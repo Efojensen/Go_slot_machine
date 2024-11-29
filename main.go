@@ -1,40 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"math/rand"
-)
-
-func getName() string {
-	name := ""
-
-	fmt.Println("Welcome to Jen's Casino...")
-	fmt.Printf("Enter your name: ")
-
-	_, err := fmt.Scanln(&name)
-
-	if err != nil {
-		return ""
-	}
-
-	fmt.Printf("Welcome %s, let's play!\n", name)
-	return name
-}
-
-func getBet(balance uint8) uint8 {
-	var bet uint8
-	for true {
-		fmt.Printf("Enter your bet or 0 to quit (balance = $%d): ", balance)
-		fmt.Scan(&bet)
-
-		if bet > balance {
-			fmt.Println("Bet cannot be larger than balance.")
-		} else {
-			break
-		}
-	}
-	return bet
-}
+import "fmt"
 
 func generateSymbolArray(symbols map[string]uint8) []string {
 	symbolSlice := make([]string, 0, 43)
@@ -44,47 +10,6 @@ func generateSymbolArray(symbols map[string]uint8) []string {
 		}
 	}
 	return symbolSlice
-}
-
-func getRandomNumber(min int, max int) int {
-	randomNumber := rand.Intn(max-min+1) + min
-	return randomNumber
-}
-
-func getSpin(reel []string, rows int, cols int) [][]string {
-	result := [][]string{}
-
-	for i := 0; i < rows; i++ {
-		result = append(result, []string{})
-	}
-
-	for col := 0; col < cols; col++ {
-		selected := map[int]bool{}
-		for row := 0; row < rows; row++ {
-			for true {
-				randomIndex := getRandomNumber(0, len(reel)-1)
-				_, exists := selected[randomIndex]
-				if !exists {
-					selected[randomIndex] = true
-					result[row] = append(result[row], reel[randomIndex])
-					break
-				}
-			}
-		}
-	}
-	return result
-}
-
-func printSpin(spin [][]string) {
-	for _, row := range spin {
-		for j, symbol := range row {
-			fmt.Printf(symbol)
-			if j != len(row)-1 {
-				fmt.Printf(" | ")
-			}
-		}
-		fmt.Println("")
-	}
 }
 
 func checkWin(spin [][]string, multipliers map[string]uint8) []uint8 {
@@ -125,17 +50,17 @@ func main() {
 
 	symbolSlice := generateSymbolArray(symbols)
 	balance := uint8(200)
-	getName()
+	GetName()
 
 	for balance > 0 {
-		bet := getBet(balance)
+		bet := GetBet(balance)
 		if bet == 0 {
 			break
 		}
 
 		balance -= bet
-		spin := getSpin(symbolSlice, 3, 3)
-		printSpin(spin)
+		spin := GetSpin(symbolSlice, 3, 3)
+		PrintSpin(spin)
 		winningLines := checkWin(spin, multipliers)
 		fmt.Println(winningLines)
 
